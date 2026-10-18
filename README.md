@@ -1,11 +1,53 @@
 # USP at SIMBig 2026 Shared Task 1 — Puno Quechua ASR
 
 Code, manifests and per-utterance predictions for the paper *USP at SIMBig 2026
-Task 1: Sentence Leakage, Encoder Choice, and an Orthographic Burden in Puno
+Task 1: Sentence Leakage, Encoder Choice, and Orthographic Inconsistency in Puno
 Quechua ASR*.
 
 Every error rate in the paper can be recomputed from `predictions/` without a
 GPU. Reproducing the models themselves requires one.
+
+## The language
+
+Puno Quechua (ISO 639-3: **qxp**) is a Cusco-Collao variety of Southern Quechua
+(QIIC), spoken by roughly **474,000** people in the Puno region of the Peruvian
+altiplano. Its share of the regional population has fallen steadily — 87.23% in
+1940, 50% in 1993, 38.01% in 2007 — and formal education is conducted almost
+entirely in Spanish, so most speakers are not literate in their own language.
+The first dedicated speech resources for it appeared in 2026.
+
+It is agglutinative, verb-final, and phonologically demanding for recognition:
+26 consonant phonemes including a three-way plain / aspirated / ejective stop
+contrast alongside a uvular series, over three vowels /a i u/, with Aymara
+influence in the phonology, suffix inventory and lexicon. One misplaced
+apostrophe turns one word into another.
+
+**Why a variety-specific system.** Quechua ASR work has tended to pool varieties
+under "Southern Quechua" or the macrolanguage code `que`, conflating varieties
+that are not mutually intelligible. The pooling is not merely nominal — the same
+lexical item differs across neighboring varieties:
+
+| variety | form |
+|---|---|
+| `quz` Cusco | askha |
+| `quy` Ayacucho-Chanka | achka |
+| `qve` Eastern Apurímac | aska |
+| **`qxp` Puno** | **ashkha** |
+
+The Puno form alone carries both the postalveolar and the aspirated stop. A
+system trained or scored against another variety's orthography is penalized for
+spellings its own variety never uses.
+
+## The shared task
+
+SIMBig 2026 Shared Task 1 asks for ASR on Puno Quechua using the Mozilla Common
+Voice collection: 22,727 validated scripted clips (30.49 h) from 77 speakers,
+plus 1,222 transcribed (5.81 h) and 6,083 untranscribed (29.60 h) spontaneous
+clips. The blind test is 659 clips — 438 scripted and 221 spontaneous.
+
+Scoring is **literal**: lowercase, strip `? ! ¿ ¡ . ,` and nothing else. No
+normalization is available to participants, which is what makes orthographic
+variation in the prompts a cost rather than a preprocessing choice.
 
 ## Sentence leakage
 
@@ -77,3 +119,13 @@ Each notebook runs on Kaggle and produced one set of reported numbers.
 
 Audio and prompts come from Mozilla Common Voice (Puno Quechua, qxp). The
 blind test audio is not redistributed here.
+
+## Sources
+
+Figures for the language and the collection are from Huaman et al., *Quechua
+Speech Datasets in Common Voice: The Case of Puno Quechua* (arXiv:2510.13871),
+and Huaman et al., *Building Community-Centred NLP Resources for Puno Quechua*
+(AmericasNLP 2026), which also supplies the cross-variety lexical comparison.
+Corpus counts quoted here were recounted from the released manifests.
+
+Model weights: https://huggingface.co/rmacario/qxp-vs2
